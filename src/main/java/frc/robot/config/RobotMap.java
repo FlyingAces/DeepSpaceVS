@@ -1,9 +1,13 @@
 package frc.robot.config;
 
+import frc.robot.util.Gains;
+
 public class RobotMap {
-	
+	public static final int K_TIMEOUT_MS = 30;
+	public static Gains SHOULDER_GAINS = new Gains(3.2, 0.0, 0.0, 0.0, 0, 0.3);
+
 	public static enum Talon {
-		SHOULDER_MOTOR(8),
+		SHOULDER_MOTOR(6), //8
 		ELBOW_MOTOR(5),
 		WRIST_MOTOR(7),
 		CYLANOID(6),
@@ -11,7 +15,7 @@ public class RobotMap {
 		LEFT_BACK(4),
 		RIGHT_FRONT(1),
 		RIGHT_BACK(2),
-		TEST(5);
+		TEST(6);
 		
 		private int _channel;
 		
@@ -51,7 +55,7 @@ public class RobotMap {
 	}
 	
 	public static enum Angle {
-		SHOULDER_START_ANGLE(125.0),
+		SHOULDER_START_ANGLE(-90.0), //125.0
 		SHOULDER_MAX_ANGLE(150.0),
 		SHOULDER_MIN_ANGLE(-150.0),
 		ELBOW_START_ANGLE(-170.0),

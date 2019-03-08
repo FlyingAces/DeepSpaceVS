@@ -20,6 +20,14 @@ public class Robot extends IterativeRobot {
 	private Command _testCommand;
 	
 	public Robot() {
+	}
+	
+	public void robotInit() {
+		_teleopCommand = new ArmAndDriveControl();
+		_autonomousCommand = new ArmAndDriveControl();
+
+		ArmSubsystem.getInstance().setEncodersToStart();
+		
 		Feed.getInstance().sendAngleInfo("currentAngles", ArmSubsystem.getInstance().getAngle(ArmSubsystem.Angle.SHOULDER), 
 														  ArmSubsystem.getInstance().getAngle(ArmSubsystem.Angle.ELBOW), 
 														  ArmSubsystem.getInstance().getAngle(ArmSubsystem.Angle.WRIST));
@@ -29,11 +37,6 @@ public class Robot extends IterativeRobot {
 		Feed.getInstance().sendString("currentHandState",  ArmSubsystem.getInstance().getHandState().toString());
 	}
 	
-	public void robotInit() {
-		_teleopCommand = new ArmAndDriveControl();
-		_autonomousCommand = new ArmAndDriveControl();
-	}
-	
 
 	public void teleopInit() {
 		if(_autonomousCommand != null) 
@@ -41,6 +44,8 @@ public class Robot extends IterativeRobot {
 		
 		if(_teleopCommand != null)
 			_teleopCommand.start();
+
+		
 	}
 	
 	public void teleopPeriodic() {

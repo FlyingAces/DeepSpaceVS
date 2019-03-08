@@ -6,124 +6,68 @@ import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.util.Conversions;
+import frc.robot.util.Feed;
 
+import edu.wpi.first.wpilibj.command.Command;
 
-public class MoveArmAnglesAndBreakCommand extends MoveArmAnglesCommand {
+public class MoveArmAnglesAndBreakCommand extends Command {
 
-    protected PIDController _shoulderPID;
-    protected PIDController _elbowPID;
-    protected PIDController _wristPID;
+    protected ArmSubsystem _arm;
+    protected Feed _feed;
+    
+    protected double _shoulderValueParam;
+	protected double _elbowValueParam;
+    protected double _wristValueParam;
+    
+    protected int _shoulderValue;
+	protected int _elbowValue;
+    protected int _wristValue;
+    
+    protected int _count;
 
     public MoveArmAnglesAndBreakCommand(double shoulderValue, double elbowValue, double wristValue) {
-        super(shoulderValue, elbowValue, wristValue);
+        super("PIDshoulderMove");
 
-        // P, I, D, F, source
-        _shoulderPID = new PIDController(0.0, 0.0, 0.0, 0.0, 
-        new PIDSource(){
-        
-            @Override
-            public void setPIDSourceType(PIDSourceType pidSource) {
-                
-            }
-        
-            @Override
-            public double pidGet() {
-                return _arm.getAngle(ArmSubsystem.Angle.SHOULDER);
-            }
-        
-            @Override
-            public PIDSourceType getPIDSourceType() {
-                return null;
-            }
-        }, 
-        new PIDOutput(){
-        
-            @Override
-            public void pidWrite(double output) {
-                _arm.setMotorSpeed(ArmSubsystem.Angle.SHOULDER, output);
-            }
-        });
-
-        _elbowPID = new PIDController(0.0, 0.0, 0.0, 0.0, new PIDSource(){
-        
-            @Override
-            public void setPIDSourceType(PIDSourceType pidSource) {
-                
-            }
-        
-            @Override
-            public double pidGet() {
-                return _arm.getAngle(ArmSubsystem.Angle.ELBOW);
-            }
-        
-            @Override
-            public PIDSourceType getPIDSourceType() {
-                return null;
-            }
-        },
-        new PIDOutput(){
-        
-            @Override
-            public void pidWrite(double output) {
-                _arm.setMotorSpeed(ArmSubsystem.Angle.ELBOW, output);
-            }
-        });
-        _wristPID = new PIDController(0.0, 0.0, 0.0, 0.0, new PIDSource(){
-        
-            @Override
-            public void setPIDSourceType(PIDSourceType pidSource) {
-                
-            }
-        
-            @Override
-            public double pidGet() {
-                return _arm.getAngle(ArmSubsystem.Angle.WRIST);
-            }
-        
-            @Override
-            public PIDSourceType getPIDSourceType() {
-                return null;
-            }
-        },
-            new PIDOutput(){
-        
-                @Override
-                public void pidWrite(double output) {
-                    _arm.setMotorSpeed(ArmSubsystem.Angle.WRIST, output);
-                }
-            });
-        
+        _arm = ArmSubsystem.getInstance();
+		requires(_arm);
+		
+		_feed = Feed.getInstance();
+		
+		_shoulderValueParam = shoulderValue;
+		_elbowValueParam = elbowValue;
+        _wristValueParam = wristValue;
     }
 
     @Override
 	protected void initialize() {
-        super.initialize();
-        
-        if(_shoulderPID.isEnabled())
-            _shoulderPID.disable();
-            
-        if(_elbowPID.isEnabled())
-            _elbowPID.disable();
-        
-        if(_wristPID.isEnabled())
-            _wristPID.disable();
+        _shoulderValue = (Double.isNaN(_shoulderValueParam))? 
+            Conversions.shoulderAndElbowAngleToEncoderPosition(_arm.getAngle(ArmSubsystem.Angle.SHOULDER)) : 
+            Conversions.shoulderAndElbowAngleToEncoderPosition(_shoulderValueParam);
+        _elbowValue = (Double.isNaN(_elbowValueParam))? 
+            Conversions.shoulderAndElbowAngleToEncoderPosition(_arm.getAngle(ArmSubsystem.Angle.ELBOW)) : 
+            Conversions.shoulderAndElbowAngleToEncoderPosition(_elbowValueParam);
+        _wristValue = (Double.isNaN(_wristValueParam))? 
+            Conversions.shoulderAndElbowAngleToEncoderPosition(_arm.getAngle(ArmSubsystem.Angle.WRIST)) : 
+            Conversions.shoulderAndElbowAngleToEncoderPosition(_wristValueParam);
+
+        _feed.sendAngleInfo("endAngles", _shoulderValueParam, _elbowValueParam, _wristValueParam);
     }
 
     @Override
-    protected boolean isFinished() {
-        if(super.isFinished() && 
-        !_shoulderPID.isEnabled() &&
-        !_elbowPID.isEnabled() &&
-        !_wristPID.isEnabled()) {
-            _shoulderPID.setSetpoint(_shoulderValue);
-            _elbowPID.setSetpoint(_elbowValue);
-            _wristPID.setSetpoint(_wristValue);
-
-            _shoulderPID.enable();
-            _elbowPID.enable();
-            _wristPID.enable();
+	protected void execute() {
+		_arm.setMotorPosition(_shoulderValue, _elbowValue, _wristValue);
+        
+        if(_count++ > 30){
+            System.out.println("shoulderValue : " + _shoulderValue + ", encoderValue : " + _arm.getEncoder());
+            _feed.sendAngleInfo("currentAngles", _arm.getAngle(ArmSubsystem.Angle.SHOULDER), _arm.getAngle(ArmSubsystem.Angle.ELBOW), _arm.getAngle(ArmSubsystem.Angle.WRIST));
+            _count = 0;
         }
+	}
 
+
+    @Override
+    protected boolean isFinished() {
         return false;
     }
 }
