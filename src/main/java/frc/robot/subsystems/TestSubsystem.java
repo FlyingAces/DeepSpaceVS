@@ -36,6 +36,9 @@ public class TestSubsystem extends Subsystem {
 		return _motorAndEncoder.getSelectedSensorPosition(0);
 	}
 
+	public double getCurrent(){
+		return _motorAndEncoder.getMotorOutputPercent();
+	}
 	@Override
 	protected void initDefaultCommand() {
 		// TODO Auto-generated method stub

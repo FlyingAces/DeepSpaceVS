@@ -25,7 +25,7 @@ public class ArmAndDriveControl extends CommandGroup {
 				});
 		*/
 		addParallel(new CommandByController());
-		addParallel(new CommandRobotArmWithController());
+		//addParallel(new CommandRobotArmWithController());
 	}
 
 }

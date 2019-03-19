@@ -50,6 +50,14 @@ public class ButtonCommandsLocked extends CommandGroup {
 							
 					});
 			break;
+		case Y_BUTTON:
+			addSequential(new MoveArmAnglesCommand(RobotMap.Angle.SHOULDER_START_ANGLE.getAngle(), 
+												   RobotMap.Angle.ELBOW_START_ANGLE.getAngle(), 
+												   RobotMap.Angle.WRIST_START_ANGLE.getAngle()));
+			break;
+		case B_BUTTON:
+			addSequential(new InitializeArmCommand());
+			break;
 		}
 	}
 }

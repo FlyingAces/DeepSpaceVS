@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 public class DriveTrainSubsystem extends Subsystem {
 	private static DriveTrainSubsystem _instance; 
 	
@@ -41,15 +43,36 @@ public class DriveTrainSubsystem extends Subsystem {
 		_wheels = new DifferentialDrive(leftGroup, rightGroup);
 		_wheels.setSafetyEnabled(false);
 		
-		_leftEncoder = leftSlave;
-		_rightEncoder = rightSlave;
+		_leftEncoder = leftMaster;
+		_rightEncoder = rightMaster;
+
+		_leftEncoder.configFactoryDefault();
+
+		_leftEncoder.setNeutralMode(NeutralMode.Brake);
+
+		_leftEncoder.configNominalOutputForward(0, RobotMap.K_TIMEOUT_MS);
+		_leftEncoder.configNominalOutputReverse(0, RobotMap.K_TIMEOUT_MS);
+		_leftEncoder.configPeakOutputForward(1.0, RobotMap.K_TIMEOUT_MS);
+		_leftEncoder.configPeakOutputReverse(-1.0, RobotMap.K_TIMEOUT_MS);
         
-        _leftEncoder.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
-        _leftEncoder.setSelectedSensorPosition(_leftEncoder.getSensorCollection().getPulseWidthPosition() & 0xfff, 0, 0);
-        _leftEncoder.setSensorPhase(true);
+        _leftEncoder.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, RobotMap.K_TIMEOUT_MS);
+		_leftEncoder.setSensorPhase(true);
+        _leftEncoder.setSelectedSensorPosition(-(_leftEncoder.getSensorCollection().getPulseWidthPosition() & 0xfff), 0, RobotMap.K_TIMEOUT_MS);
+		_leftEncoder.getSensorCollection().setQuadraturePosition(0, RobotMap.K_TIMEOUT_MS);
+
+		
+		_rightEncoder.configFactoryDefault();
+
+		_rightEncoder.setNeutralMode(NeutralMode.Brake);
+
+		_rightEncoder.configNominalOutputForward(0, RobotMap.K_TIMEOUT_MS);
+		_rightEncoder.configNominalOutputReverse(0, RobotMap.K_TIMEOUT_MS);
+		_rightEncoder.configPeakOutputForward(1.0, RobotMap.K_TIMEOUT_MS);
+		_rightEncoder.configPeakOutputReverse(-1.0, RobotMap.K_TIMEOUT_MS);
         
-        _rightEncoder.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
-        _rightEncoder.setSelectedSensorPosition(_rightEncoder.getSensorCollection().getPulseWidthPosition() & 0xfff, 0, 0);
+        _rightEncoder.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, RobotMap.K_TIMEOUT_MS);
+        _rightEncoder.setSelectedSensorPosition((_rightEncoder.getSensorCollection().getPulseWidthPosition() & 0xfff), 0, RobotMap.K_TIMEOUT_MS);
+		_rightEncoder.getSensorCollection().setQuadraturePosition(0, RobotMap.K_TIMEOUT_MS);
 
 	}
 	

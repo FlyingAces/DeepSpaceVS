@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.util.Feed;
+import frc.robot.util.Conversions;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -24,6 +25,8 @@ public class MoveArmAnglesCommand extends Command {
 	protected double _wristDir;
 	
 	protected double _speedMultiplier;
+	
+	protected int _count;
 	
 	public MoveArmAnglesCommand(double shoulderValue, double elbowValue, double wristValue) {
 		super("MoveArmAnglesCommand");
@@ -77,11 +80,21 @@ public class MoveArmAnglesCommand extends Command {
 			elbowSpeed = diffElbowAngle / diffWristAngle;
 		}
 		
-		_arm.setMotorSpeeds(_shoulderDir * _speedMultiplier * shoulderSpeed, 
-						    _elbowDir * _speedMultiplier * elbowSpeed, 
-				            _wristDir * _speedMultiplier * wristSpeed);
-		    
-		_feed.sendAngleInfo("currentAngles", _arm.getAngle(ArmSubsystem.Angle.SHOULDER), _arm.getAngle(ArmSubsystem.Angle.ELBOW), _arm.getAngle(ArmSubsystem.Angle.WRIST));
+		if(_shoulderDir != 0.0)
+			_arm.setMotorSpeed(ArmSubsystem.Angle.SHOULDER, _shoulderDir * _speedMultiplier * shoulderSpeed);
+		else
+			_arm.setMotorPosition(ArmSubsystem.Angle.SHOULDER, Conversions.shoulderAndElbowAngleToEncoderPosition(_shoulderValue));
+			
+		if(_elbowDir != 0.0)
+			_arm.setMotorSpeed(ArmSubsystem.Angle.ELBOW, _elbowDir * _speedMultiplier * elbowSpeed);
+		else
+			_arm.setMotorPosition(ArmSubsystem.Angle.ELBOW, Conversions.shoulderAndElbowAngleToEncoderPosition(_elbowValue));
+			
+		if(_wristDir != 0.0)
+			_arm.setMotorSpeed(ArmSubsystem.Angle.WRIST, _wristDir * _speedMultiplier * wristSpeed);
+		else
+			_arm.setMotorPosition(ArmSubsystem.Angle.WRIST, Conversions.wristAngleToEncoderPosition(_wristValue));
+		
 	}
 
 	@Override
@@ -95,17 +108,18 @@ public class MoveArmAnglesCommand extends Command {
 		if((_wristDir < 0)? _arm.getAngle(ArmSubsystem.Angle.WRIST) <= _wristValue : _arm.getAngle(ArmSubsystem.Angle.WRIST) >= _wristValue)
 			_wristDir = 0.0;
 			
-		return 	(_shoulderDir == 0.0) && (_elbowDir == 0.0) && (_wristDir == 0.0);
+
+		return 	((_shoulderDir == 0.0) && (_elbowDir == 0.0) && (_wristDir == 0.0));
 	}
+
 	
 	@Override
 	protected void end() {
-		_arm.setMotorSpeeds(0.0, 0.0, 0.0);
-		
-		_feed.sendAngleInfo("currentAngles", _arm.getAngle(ArmSubsystem.Angle.SHOULDER), 
-											 _arm.getAngle(ArmSubsystem.Angle.ELBOW), 
-											 _arm.getAngle(ArmSubsystem.Angle.WRIST));
+		_arm.setMotorPosition(ArmSubsystem.Angle.SHOULDER,Conversions.shoulderAndElbowAngleToEncoderPosition(_shoulderValue));
+		_arm.setMotorPosition(ArmSubsystem.Angle.ELBOW,Conversions.shoulderAndElbowAngleToEncoderPosition(_elbowValue));
+		_arm.setMotorPosition(ArmSubsystem.Angle.WRIST, Conversions.wristAngleToEncoderPosition(_wristValue));
 	}
+	
 	
 	public void setSpeedMultiplier(double value) {
 		_speedMultiplier = value;

@@ -1,12 +1,7 @@
 package frc.robot.util;
 
-import java.util.Arrays;
 
 import frc.robot.config.RobotMap;
-
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class RobotArmCalculations {
 

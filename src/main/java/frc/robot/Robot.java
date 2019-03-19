@@ -3,6 +3,8 @@ package frc.robot;
 
 import frc.robot.commands.ArmAndDriveControl;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.CameraSubsystem;
+import frc.robot.subsystems.ControllerSubsystem;
 import frc.robot.util.Feed;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -18,6 +20,8 @@ public class Robot extends IterativeRobot {
 	private Command _autonomousCommand;
 	private Command _teleopCommand;
 	private Command _testCommand;
+	
+	private int _count;
 	
 	public Robot() {
 	}
@@ -35,6 +39,9 @@ public class Robot extends IterativeRobot {
 												      ArmSubsystem.getInstance().getAngle(ArmSubsystem.Angle.ELBOW), 
 												      ArmSubsystem.getInstance().getAngle(ArmSubsystem.Angle.WRIST));
 		Feed.getInstance().sendString("currentHandState",  ArmSubsystem.getInstance().getHandState().toString());
+
+		ControllerSubsystem.getInstance();
+		CameraSubsystem.getInstance();
 	}
 	
 
@@ -44,12 +51,17 @@ public class Robot extends IterativeRobot {
 		
 		if(_teleopCommand != null)
 			_teleopCommand.start();
-
-		
 	}
 	
 	public void teleopPeriodic() {
-		Scheduler.getInstance().run();
+		Scheduler.getInstance().run(); 
+		if(_count++ > 10){
+			Feed.getInstance().sendAngleInfo("currentAngles", 
+											ArmSubsystem.getInstance().getAngle(ArmSubsystem.Angle.SHOULDER), 
+											ArmSubsystem.getInstance().getAngle(ArmSubsystem.Angle.ELBOW), 
+											ArmSubsystem.getInstance().getAngle(ArmSubsystem.Angle.WRIST));
+			_count = 0;
+		}
 	}
 	
 	public void autonomousInit() {
@@ -63,6 +75,13 @@ public class Robot extends IterativeRobot {
 	
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
+		if(_count++ > 10){
+			Feed.getInstance().sendAngleInfo("currentAngles", 
+											ArmSubsystem.getInstance().getAngle(ArmSubsystem.Angle.SHOULDER), 
+											ArmSubsystem.getInstance().getAngle(ArmSubsystem.Angle.ELBOW), 
+											ArmSubsystem.getInstance().getAngle(ArmSubsystem.Angle.WRIST));
+			_count = 0;
+		}
 	}
 	
 	public void testInit() {

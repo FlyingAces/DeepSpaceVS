@@ -21,7 +21,7 @@ public class MoveArmAlongAxisCommand extends MoveArmAnglesCommand {
 	}
 	
 	private double updateToNextStep(double curr) {
-		curr += _dir;
+		curr += _dir * 6.0;
 		if((_dir < 0.0)? curr < _endLoc : curr > _endLoc)
 			curr = _endLoc;
 		

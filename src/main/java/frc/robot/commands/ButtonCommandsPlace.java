@@ -17,18 +17,30 @@ public class ButtonCommandsPlace extends CommandGroup {
 			addSequential(new ChangeHandStateCommand(RobotArmCalculations.HandState.LOCKED));
 			break;
 		case X_BUTTON:
+			addSequential(new MoveArmWristToCommand(RobotMap.PLACE_START_X + 5.0, MoveArmWristToCommand.USE_CURRENT_LOCATION));
+			addSequential(new ReleaseBallCommand());
+			addSequential(new MoveArmWristToCommand(RobotMap.PLACE_START_X, MoveArmWristToCommand.USE_CURRENT_LOCATION));
+
+			/**
 			addSequential(new MoveArmAlongAxisCommand(MoveArmAlongAxisCommand.Axis.X, RobotMap.PLACE_START_X + 1.0));
 			addSequential(new WaitCommand(0.5));
 			addSequential(new MoveArmAlongAxisCommand(MoveArmAlongAxisCommand.Axis.X, RobotMap.PLACE_START_X));
+			*/
 			break;
 		case Y_BUTTON:
-			addSequential(new MoveArmAlongAxisCommand(MoveArmAlongAxisCommand.Axis.Y, RobotMap.DISK_HIGH_POSITION_Y));
+			addSequential(new MoveArmWristToCommand(RobotMap.PLACE_START_X, RobotMap.DISK_HIGH_POSITION_Y));
+
+			//addSequential(new MoveArmAlongAxisCommand(MoveArmAlongAxisCommand.Axis.Y, RobotMap.DISK_HIGH_POSITION_Y));
 			break;
 		case B_BUTTON:
-			addSequential(new MoveArmAlongAxisCommand(MoveArmAlongAxisCommand.Axis.Y, RobotMap.DISK_MIDDLE_POSITION_Y));
+			addSequential(new MoveArmWristToCommand(RobotMap.PLACE_START_X, RobotMap.DISK_MIDDLE_POSITION_Y));
+
+			//addSequential(new MoveArmAlongAxisCommand(MoveArmAlongAxisCommand.Axis.Y, RobotMap.DISK_MIDDLE_POSITION_Y));
 			break;
 		case A_BUTTON:
-			addSequential(new MoveArmAlongAxisCommand(MoveArmAlongAxisCommand.Axis.Y, RobotMap.DISK_LOW_POSITION_Y));
+			addSequential(new MoveArmWristToCommand(RobotMap.PLACE_START_X, RobotMap.DISK_LOW_POSITION_Y));
+			
+			//addSequential(new MoveArmAlongAxisCommand(MoveArmAlongAxisCommand.Axis.Y, RobotMap.DISK_LOW_POSITION_Y));
 			break;
 		
 		}
