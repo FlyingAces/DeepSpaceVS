@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import frc.robot.config.MotorSpeeds;
 import frc.robot.config.RobotMap;
-import frc.robot.commands.CommandRobotArmWithController;
 import frc.robot.util.RobotArmCalculations;
 import frc.robot.util.RobotArmCalculations.HandState;
 import frc.robot.util.Conversions;
@@ -13,8 +12,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class ArmSubsystem extends Subsystem {
@@ -149,7 +146,7 @@ public class ArmSubsystem extends Subsystem {
 		
 		return anglesAngle;
 	}
-	
+
 	public boolean isInverted() {
 		return getAngle(Angle.ELBOW) < 0.0;
 	}

@@ -6,7 +6,7 @@ import frc.robot.config.RobotMap;
 public class RobotArmCalculations {
 
 	public static enum HandState {
-		PICK_UP, PLACE, LOCKED;
+		PICK_UP, PLACE_BALL, PLACE_DISK, LOCKED;
 	}
 
 	private double _shoulderAngle;
@@ -85,7 +85,8 @@ public class RobotArmCalculations {
 		case PICK_UP:
 			_wristAngle = 90.0 - (_shoulderAngle + _elbowAngle);
 			break;
-		case PLACE:
+		case PLACE_BALL:
+		case PLACE_DISK:
 			_wristAngle = -(_shoulderAngle + _elbowAngle);
 			break;
 		default:

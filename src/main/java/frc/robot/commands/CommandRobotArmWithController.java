@@ -56,7 +56,8 @@ public class CommandRobotArmWithController extends MoveArmAnglesCommand {
 					calculations.getWristTargetY() > RobotMap.PICK_UP_GROUND_LEVEL_Y)
 				calculations.setWristTargetY(calculations.getWristTargetY() - 1);
 			break;
-		case PLACE:
+		case PLACE_BALL:
+		case PLACE_DISK:
 			if (rightY < 0 &&
 					calculations.getWristTargetY() < RobotMap.PLACE_MAX_HEIGHT_Y) 
 				calculations.setWristTargetY(calculations.getWristTargetY() + 1);

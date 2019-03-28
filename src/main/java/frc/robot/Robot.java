@@ -60,6 +60,7 @@ public class Robot extends IterativeRobot {
 											ArmSubsystem.getInstance().getAngle(ArmSubsystem.Angle.SHOULDER), 
 											ArmSubsystem.getInstance().getAngle(ArmSubsystem.Angle.ELBOW), 
 											ArmSubsystem.getInstance().getAngle(ArmSubsystem.Angle.WRIST));
+			
 			_count = 0;
 		}
 	}
@@ -86,11 +87,5 @@ public class Robot extends IterativeRobot {
 	
 	public void testInit() {
 		System.out.println("Start Test");
-		_testCommand = new ArmAndDriveControl();
-		_testCommand.start();
-		while(isTest() && isEnabled()) {
-			LiveWindow.run();
-			Timer.delay(0.1);
-		}
 	}
 }

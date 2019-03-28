@@ -2,10 +2,6 @@ package frc.robot.subsystems;
 
 import frc.robot.config.RobotMap;
 import frc.robot.commands.ButtonConditionalCommands;
-import frc.robot.commands.InitializeArmCommand;
-import frc.robot.commands.ReleaseBallFromStartPositionCommands;
-import frc.robot.commands.MoveArmAnglesCommand;
-import frc.robot.commands.TestCommand;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
@@ -41,10 +37,10 @@ public class ControllerSubsystem extends Subsystem {
 		
 		_buttonB = new JoystickButton(_joystick, RobotMap.Controller.B_BUTTON.getChannel());
 		_buttonB.whenPressed(new ButtonConditionalCommands(RobotMap.Controller.B_BUTTON));
+		//_buttonB.whileHeld(new TestCommand(TestCommand.Direction.POS));
 
 		_buttonA = new JoystickButton(_joystick, RobotMap.Controller.A_BUTTON.getChannel());
 		_buttonA.whenPressed(new ButtonConditionalCommands(RobotMap.Controller.A_BUTTON));
-		//_buttonA.whileHeld(new TestCommand(TestCommand.Direction.POS));
 	}
 	
 	@Override

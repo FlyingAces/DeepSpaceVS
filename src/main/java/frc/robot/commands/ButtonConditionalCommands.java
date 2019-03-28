@@ -9,12 +9,22 @@ import edu.wpi.first.wpilibj.command.ConditionalCommand;
 public class ButtonConditionalCommands extends ConditionalCommand {
 	public ButtonConditionalCommands(RobotMap.Controller controller) {
 		super(new ButtonCommandsLocked(controller), 
-				new ConditionalCommand(new ButtonCommandsPickUp(controller), new ButtonCommandsPlace(controller)) {
-						@Override
-						protected boolean condition() {
-							return ArmSubsystem.getInstance().getHandState() == RobotArmCalculations.HandState.PICK_UP;
-						}
-					});
+				new ConditionalCommand( new ButtonCommandsPickUp(controller),
+										new ConditionalCommand(new ButtonCommandsPlaceBall(controller), 
+															   new ButtonCommandsPlaceDisk(controller))
+										{
+											@Override
+											protected boolean condition() {
+												return ArmSubsystem.getInstance().getHandState() == RobotArmCalculations.HandState.PLACE_BALL;
+											}
+										})
+				{
+										
+					@Override
+					protected boolean condition() {
+						return ArmSubsystem.getInstance().getHandState() == RobotArmCalculations.HandState.PICK_UP;
+					}
+				});
 	}
 
 	@Override

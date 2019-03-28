@@ -14,7 +14,7 @@ public class ButtonCommandsLocked extends CommandGroup {
 		case TRIGGER_LB:
 			addSequential(
 					new ConditionalCommand(
-							new ChangeHandStateCommand(RobotArmCalculations.HandState.PLACE), 
+							new ChangeHandStateCommand(RobotArmCalculations.HandState.PLACE_DISK), 
 							new WaitCommand(.01)) {
 
 							@Override
@@ -40,23 +40,27 @@ public class ButtonCommandsLocked extends CommandGroup {
 		case X_BUTTON:
 			addSequential(
 					new ConditionalCommand(
-							new FlipCommand(FlipCommand.Direction.FORWARD), 
-							new FlipCommand(FlipCommand.Direction.BACK)) {
-
+							new InitializeArmCommand(InitializeArmCommand.Position.PICK_UP), 
+							new InitializeArmCommand(InitializeArmCommand.Position.START)) {
+							
+							private boolean _toggle = false;
+							
 							@Override
 							protected boolean condition() {
-								return ArmSubsystem.getInstance().isInverted();
+								_toggle = !_toggle;
+								return _toggle;
 							}
 							
 					});
 			break;
 		case Y_BUTTON:
-			addSequential(new MoveArmAnglesCommand(RobotMap.Angle.SHOULDER_START_ANGLE.getAngle(), 
-												   RobotMap.Angle.ELBOW_START_ANGLE.getAngle(), 
-												   RobotMap.Angle.WRIST_START_ANGLE.getAngle()));
+			addSequential(new MoveArmJointsByButtonCommand(ArmSubsystem.Angle.WRIST, controller));
+			break;
+		case A_BUTTON:
+			addSequential(new MoveArmJointsByButtonCommand(ArmSubsystem.Angle.ELBOW, controller));
 			break;
 		case B_BUTTON:
-			addSequential(new InitializeArmCommand());
+			addSequential(new MoveArmJointsByButtonCommand(ArmSubsystem.Angle.SHOULDER, controller));
 			break;
 		}
 	}

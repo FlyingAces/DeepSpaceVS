@@ -6,27 +6,40 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.util.RobotArmCalculations;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.ConditionalCommand;
 import edu.wpi.first.wpilibj.command.WaitCommand;
 
 public class InitializeArmCommand extends CommandGroup {
-	public InitializeArmCommand() {
+	public static enum Position {
+		START, PICK_UP;
+	}
 
-		addSequential(new MoveArmAnglesCommand(0.0, 45.0, -45.0));
-		addSequential(new WaitCommand(.5));
-		addSequential(new MoveArmWristToCommand(RobotMap.PICK_UP_START_X, RobotMap.PICK_UP_START_Y, RobotArmCalculations.HandState.PICK_UP));
-			
-		//addSequential(new MoveArmAlongAxisCommand(MoveArmAlongAxisCommand.Axis.X, RobotMap.PICK_UP_START_X));
-		//addSequential(new MoveArmAlongAxisCommand(MoveArmAlongAxisCommand.Axis.Y, RobotMap.GROUND_LEVEL_Y + 20.0));
-		
-		/*addSequential(new MoveArmWristToCommand(0.0, 
-				 RobotMap.Measurement.SHOULDER_SEGMENT_LENGTH.getInches() + (RobotMap.Measurement.ELBOW_SEGMENT_LENGTH.getInches()*.75)));
+	public InitializeArmCommand(Position position) {
+		switch(position){
+			case START:
+				addSequential(
+					new ConditionalCommand(
+						new MoveArmWristToCommand(RobotMap.ROBOT_FRONT_X, RobotMap.ROBOT_FRONT_MID_STEP_Y), 
+						new WaitCommand(.01)) {
 
-		addSequential(new ZeroOutArmAnglesCommand());
-		
-		addSequential(new MoveArmAnglesCommand(MoveArmAnglesCommand.USE_CURRENT_ANGLE, -35.0, 170));
-		
-		addSequential(new MoveArmAlongAxisCommand(MoveArmAlongAxisCommand.Axis.X, RobotMap.ROBOT_BACK_X - 10.0));
-		addSequential(new MoveArmAlongAxisCommand(MoveArmAlongAxisCommand.Axis.Y, RobotMap.GROUND_LEVEL_Y + 5.0));*/
+						@Override
+						protected boolean condition() {
+							return ArmSubsystem.getInstance().getWristTargetY() < RobotMap.ROBOT_FRONT_MID_STEP_Y;
+						}
+						
+					});
+				
+				addSequential(new MoveArmAnglesCommand(RobotMap.Angle.SHOULDER_START_ANGLE.getAngle(), 
+													RobotMap.Angle.ELBOW_START_ANGLE.getAngle(), 
+													RobotMap.Angle.WRIST_START_ANGLE.getAngle()));
+			break;
+			case PICK_UP:
+				addSequential(new MoveArmWristToCommand(RobotMap.ROBOT_BACK_X, RobotMap.ROBOT_BACK_MID_STEP_Y));
+				addSequential(new MoveArmAnglesCommand(0.0, 45.0, MoveArmAnglesCommand.USE_CURRENT_ANGLE));
+				addSequential(new MoveArmWristToCommand(RobotMap.ROBOT_FRONT_X, RobotMap.ROBOT_FRONT_MID_STEP_Y));
+				addSequential(new ChangeHandStateCommand(RobotArmCalculations.HandState.PICK_UP));
+			break;
+		}
 	}
 
 }

@@ -23,10 +23,14 @@ public class MoveArmAnglesCommand extends Command {
 	protected double _shoulderDir;
 	protected double _elbowDir;
 	protected double _wristDir;
-	
-	protected double _speedMultiplier;
-	
+
 	protected int _count;
+	protected final int _maxCountOnTarget = 3;
+	protected double[] _shoulderOnTarget;
+	protected double[] _elbowOnTarget;
+	protected double[] _wristOnTarget;
+
+	protected double _speedMultiplier;
 	
 	public MoveArmAnglesCommand(double shoulderValue, double elbowValue, double wristValue) {
 		super("MoveArmAnglesCommand");
@@ -55,12 +59,33 @@ public class MoveArmAnglesCommand extends Command {
 					(_elbowValue > _arm.getAngle(ArmSubsystem.Angle.ELBOW))? 1.0 : -1.0;
 		_wristDir = (_wristValue == _arm.getAngle(ArmSubsystem.Angle.WRIST)) ? 0.0 : 
 					(_wristValue > _arm.getAngle(ArmSubsystem.Angle.WRIST)) ? 1.0 : -1.0;
-		
+
+		_shoulderOnTarget = new double[_maxCountOnTarget];
+		_elbowOnTarget = new double[_maxCountOnTarget];
+		_wristOnTarget = new double[_maxCountOnTarget];
+
+		for(int i = 0; i < _maxCountOnTarget; i++){
+			_shoulderOnTarget[i] = i;
+			_elbowOnTarget[i] = i;
+			_wristOnTarget[i] = i;
+		}
+
+		_count = 0;
+
 		_feed.sendAngleInfo("endAngles", _shoulderValue, _elbowValue, _wristValue);
 	}
 	
 	@Override
 	protected void execute() {
+		if((_shoulderDir < 0)? _arm.getAngle(ArmSubsystem.Angle.SHOULDER) <= _shoulderValue : _arm.getAngle(ArmSubsystem.Angle.SHOULDER) >= _shoulderValue)
+			_shoulderDir = 0.0;
+		
+		if((_elbowDir < 0)? _arm.getAngle(ArmSubsystem.Angle.ELBOW) <= _elbowValue : _arm.getAngle(ArmSubsystem.Angle.ELBOW) >= _elbowValue)
+			_elbowDir = 0.0;
+		
+		if((_wristDir < 0)? _arm.getAngle(ArmSubsystem.Angle.WRIST) <= _wristValue : _arm.getAngle(ArmSubsystem.Angle.WRIST) >= _wristValue)
+			_wristDir = 0.0;
+
 		double diffShoulderAngle = Math.abs(_shoulderValue - _arm.getAngle(ArmSubsystem.Angle.SHOULDER));
 		double diffElbowAngle = Math.abs(_elbowValue - _arm.getAngle(ArmSubsystem.Angle.ELBOW));
 		double diffWristAngle = Math.abs(_wristValue - _arm.getAngle(ArmSubsystem.Angle.WRIST));
@@ -99,6 +124,26 @@ public class MoveArmAnglesCommand extends Command {
 
 	@Override
 	protected boolean isFinished() {
+		_shoulderOnTarget[_count] = _arm.getAngle(ArmSubsystem.Angle.SHOULDER);
+		_elbowOnTarget[_count] = _arm.getAngle(ArmSubsystem.Angle.ELBOW);
+		_wristOnTarget[_count] = _arm.getAngle(ArmSubsystem.Angle.WRIST);
+
+		_count = (_count + 1) % _maxCountOnTarget;
+
+		for(int i = 1; i < _maxCountOnTarget; i++){
+			if(_shoulderOnTarget[0] != _shoulderOnTarget[i])
+				return false;
+
+			if(_elbowOnTarget[0] != _elbowOnTarget[i])
+				return false;
+
+			if(_wristOnTarget[0] != _wristOnTarget[i])
+				return false;
+		}
+		
+		return true;
+
+		/**
 		if((_shoulderDir < 0)? _arm.getAngle(ArmSubsystem.Angle.SHOULDER) <= _shoulderValue : _arm.getAngle(ArmSubsystem.Angle.SHOULDER) >= _shoulderValue)
 			_shoulderDir = 0.0;
 		
@@ -110,14 +155,15 @@ public class MoveArmAnglesCommand extends Command {
 			
 
 		return 	((_shoulderDir == 0.0) && (_elbowDir == 0.0) && (_wristDir == 0.0));
+		*/
 	}
 
 	
 	@Override
 	protected void end() {
-		_arm.setMotorPosition(ArmSubsystem.Angle.SHOULDER,Conversions.shoulderAndElbowAngleToEncoderPosition(_shoulderValue));
-		_arm.setMotorPosition(ArmSubsystem.Angle.ELBOW,Conversions.shoulderAndElbowAngleToEncoderPosition(_elbowValue));
-		_arm.setMotorPosition(ArmSubsystem.Angle.WRIST, Conversions.wristAngleToEncoderPosition(_wristValue));
+		_arm.setMotorPosition(ArmSubsystem.Angle.SHOULDER,Conversions.shoulderAndElbowAngleToEncoderPosition(_arm.getAngle(ArmSubsystem.Angle.SHOULDER)));
+		_arm.setMotorPosition(ArmSubsystem.Angle.ELBOW,Conversions.shoulderAndElbowAngleToEncoderPosition(_arm.getAngle(ArmSubsystem.Angle.ELBOW)));
+		_arm.setMotorPosition(ArmSubsystem.Angle.WRIST, Conversions.wristAngleToEncoderPosition(_arm.getAngle(ArmSubsystem.Angle.WRIST)));
 	}
 	
 	
