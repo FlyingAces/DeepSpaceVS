@@ -196,7 +196,7 @@ public class ArmSubsystem extends Subsystem {
 			double shoulderValueVSGavity = speed - (combatGravity * Math.sin(shouldRadians));
 			_shoulderMotorAndEncoder.set(ControlMode.PercentOutput, shoulderValueVSGavity);
 			
-			System.out.println("shoulder speed : " + speed + " position : " + _shoulderMotorAndEncoder.getSelectedSensorPosition());
+			//System.out.println("shoulder speed : " + speed + " position : " + _shoulderMotorAndEncoder.getSelectedSensorPosition());
 			break;
 		case ELBOW:
 			speed = (speed > 0)? speed - RobotMap.ELBOW_MIN_COMBAT_GRAVITY : speed + RobotMap.ELBOW_MIN_COMBAT_GRAVITY;
@@ -206,7 +206,7 @@ public class ArmSubsystem extends Subsystem {
 			double elbowValueVSGavity = speed - (RobotMap.ELBOW_MIN_COMBAT_GRAVITY * Math.sin(elbowRadians));
 			_elbowMotorAndEncoder.set(ControlMode.PercentOutput, elbowValueVSGavity);
 			
-			System.out.println("elbow speed : " + speed + " position : " + _elbowMotorAndEncoder.getSelectedSensorPosition());
+			//System.out.println("elbow speed : " + speed + " position : " + _elbowMotorAndEncoder.getSelectedSensorPosition());
 			break;
 		case WRIST:
 			speed = (speed > 0)? speed - RobotMap.WRIST_MIN_COMBAT_GRAVITY : speed + RobotMap.WRIST_MIN_COMBAT_GRAVITY;
@@ -216,7 +216,7 @@ public class ArmSubsystem extends Subsystem {
 			double wristValueVSGavity = speed - (RobotMap.WRIST_MIN_COMBAT_GRAVITY * Math.sin(wristRadians));
 			_wristMotorAndEncoder.set(ControlMode.PercentOutput, wristValueVSGavity);
 			
-			System.out.println("wrist speed : " + speed + " position : " + _wristMotorAndEncoder.getSelectedSensorPosition());
+			//System.out.println("wrist speed : " + speed + " position : " + _wristMotorAndEncoder.getSelectedSensorPosition());
 			break;
 		}
 	}
@@ -237,14 +237,18 @@ public class ArmSubsystem extends Subsystem {
 
 				double shouldRadians = Conversions.degreeToRadian(getAngle(Angle.SHOULDER));
 				_shoulderMotorAndEncoder.set(ControlMode.Position, position, DemandType.ArbitraryFeedForward, -(combatGravity * Math.sin(shouldRadians)));
+				//_shoulderMotorAndEncoder.set(ControlMode.Position, position);
 				break;
 			case ELBOW:
 				double elbowRadians = Conversions.degreeToRadian(getAngle(Angle.SHOULDER) + getAngle(Angle.ELBOW));
 				_elbowMotorAndEncoder.set(ControlMode.Position, position, DemandType.ArbitraryFeedForward, -(RobotMap.ELBOW_MIN_COMBAT_GRAVITY * Math.sin(elbowRadians)));
+				//_elbowMotorAndEncoder.set(ControlMode.Position, position);
 				break;
 			case WRIST:
 				double wristRadians =  Conversions.degreeToRadian(getAngle(Angle.WRIST) + getAngle(Angle.SHOULDER) + getAngle(Angle.ELBOW));
 				_wristMotorAndEncoder.set(ControlMode.Position, position,  DemandType.ArbitraryFeedForward, -(RobotMap.WRIST_MIN_COMBAT_GRAVITY * Math.sin(wristRadians)));
+				//_wristMotorAndEncoder.set(ControlMode.Position, position);
+				//System.out.println("wrist speed : position : " + _wristMotorAndEncoder.getSelectedSensorPosition());
 				break;
 			}
 	}

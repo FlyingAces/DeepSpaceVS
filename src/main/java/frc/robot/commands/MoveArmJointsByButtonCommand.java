@@ -12,14 +12,18 @@ public class MoveArmJointsByButtonCommand extends Command {
     private ArmSubsystem.Angle _joint;
     private RobotMap.Controller _controller;
 	
+	private int _currDir;
+
 	public MoveArmJointsByButtonCommand(ArmSubsystem.Angle joint, RobotMap.Controller controller) {
         super("MoveArmJointsByButtonCommand");
-        
+		
         _arm = ArmSubsystem.getInstance();
         requires(_arm);
 
         _joint = joint;
-        _controller = controller;
+		_controller = controller;
+		
+		_currDir = 0;
 	}
 	
 	@Override
@@ -32,16 +36,25 @@ public class MoveArmJointsByButtonCommand extends Command {
         int dir = 0;
 
         //dpad left
-        if(ControllerSubsystem.getInstance().getController().getPOV() > 225 && 
-           ControllerSubsystem.getInstance().getController().getPOV() < 315)
+        if(ControllerSubsystem.getInstance().getController().getPOV() >= 225 && 
+           ControllerSubsystem.getInstance().getController().getPOV() <= 315)
            dir = -1; 
         
         //dpad right   
-        if(ControllerSubsystem.getInstance().getController().getPOV() > 45 && 
-           ControllerSubsystem.getInstance().getController().getPOV() < 135)
+        if(ControllerSubsystem.getInstance().getController().getPOV() >= 45 && 
+           ControllerSubsystem.getInstance().getController().getPOV() <= 135)
            dir = 1; 
+		
+		if(_currDir != dir) {
+			if(dir != 0)
+				_arm.setMotorSpeed(_joint, dir);
+			else if(_joint == ArmSubsystem.Angle.WRIST)
+				_arm.setMotorPosition(_joint, Conversions.wristAngleToEncoderPosition(_arm.getAngle(_joint)));
+			else
+				_arm.setMotorPosition(_joint, Conversions.shoulderAndElbowAngleToEncoderPosition(_arm.getAngle(_joint)));
+		}
 
-		_arm.setMotorSpeed(_joint, dir);
+		_currDir = dir;
 	}
 
 	@Override

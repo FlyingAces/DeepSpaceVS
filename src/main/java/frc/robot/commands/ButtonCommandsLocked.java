@@ -40,7 +40,7 @@ public class ButtonCommandsLocked extends CommandGroup {
 		case X_BUTTON:
 			addSequential(
 					new ConditionalCommand(
-							new InitializeArmCommand(InitializeArmCommand.Position.PICK_UP), 
+							new InitializeArmCommand(InitializeArmCommand.Position.PLACE_BALL), 
 							new InitializeArmCommand(InitializeArmCommand.Position.START)) {
 							
 							private boolean _toggle = false;
@@ -56,10 +56,10 @@ public class ButtonCommandsLocked extends CommandGroup {
 		case Y_BUTTON:
 			addSequential(new MoveArmJointsByButtonCommand(ArmSubsystem.Angle.WRIST, controller));
 			break;
-		case A_BUTTON:
+		case B_BUTTON:
 			addSequential(new MoveArmJointsByButtonCommand(ArmSubsystem.Angle.ELBOW, controller));
 			break;
-		case B_BUTTON:
+		case A_BUTTON:
 			addSequential(new MoveArmJointsByButtonCommand(ArmSubsystem.Angle.SHOULDER, controller));
 			break;
 		}

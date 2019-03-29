@@ -77,13 +77,13 @@ public class MoveArmAnglesCommand extends Command {
 	
 	@Override
 	protected void execute() {
-		if((_shoulderDir < 0)? _arm.getAngle(ArmSubsystem.Angle.SHOULDER) <= _shoulderValue : _arm.getAngle(ArmSubsystem.Angle.SHOULDER) >= _shoulderValue)
+		if((_shoulderDir < 0)? _arm.getAngle(ArmSubsystem.Angle.SHOULDER) <= _shoulderValue + 1 : _arm.getAngle(ArmSubsystem.Angle.SHOULDER) >= _shoulderValue - 1)
 			_shoulderDir = 0.0;
 		
-		if((_elbowDir < 0)? _arm.getAngle(ArmSubsystem.Angle.ELBOW) <= _elbowValue : _arm.getAngle(ArmSubsystem.Angle.ELBOW) >= _elbowValue)
+		if((_elbowDir < 0)? _arm.getAngle(ArmSubsystem.Angle.ELBOW) <= _elbowValue + 1 : _arm.getAngle(ArmSubsystem.Angle.ELBOW) >= _elbowValue - 1)
 			_elbowDir = 0.0;
 		
-		if((_wristDir < 0)? _arm.getAngle(ArmSubsystem.Angle.WRIST) <= _wristValue : _arm.getAngle(ArmSubsystem.Angle.WRIST) >= _wristValue)
+		if((_wristDir < 0)? _arm.getAngle(ArmSubsystem.Angle.WRIST) <= _wristValue + 1 : _arm.getAngle(ArmSubsystem.Angle.WRIST) >= _wristValue - 1)
 			_wristDir = 0.0;
 
 		double diffShoulderAngle = Math.abs(_shoulderValue - _arm.getAngle(ArmSubsystem.Angle.SHOULDER));
@@ -104,7 +104,11 @@ public class MoveArmAnglesCommand extends Command {
 			shoulderSpeed = diffShoulderAngle / diffWristAngle;
 			elbowSpeed = diffElbowAngle / diffWristAngle;
 		}
-		
+
+		shoulderSpeed = Math.max(shoulderSpeed, .3);
+		elbowSpeed = Math.max(elbowSpeed, .3);
+		wristSpeed = Math.max(wristSpeed, .3);
+
 		if(_shoulderDir != 0.0)
 			_arm.setMotorSpeed(ArmSubsystem.Angle.SHOULDER, _shoulderDir * _speedMultiplier * shoulderSpeed);
 		else

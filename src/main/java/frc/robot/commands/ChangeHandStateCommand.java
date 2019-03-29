@@ -24,9 +24,8 @@ public class ChangeHandStateCommand extends CommandGroup {
 					
 				});
 
-			addSequential(new MoveArmWristToCommand(RobotMap.PICK_UP_START_X, RobotMap.PICK_UP_START_Y));
+			addSequential(new MoveArmWristToCommand(RobotMap.PICK_UP_START_X, RobotMap.PICK_UP_START_Y,RobotArmCalculations.HandState.PICK_UP));
 			
-			addSequential(new MoveArmWristToCommand(RobotArmCalculations.HandState.PICK_UP));
 			break;
 		case PLACE_BALL:
 			addSequential(
@@ -38,17 +37,6 @@ public class ChangeHandStateCommand extends CommandGroup {
 					protected boolean condition() {
 						return (ArmSubsystem.getInstance().getHandState() != RobotArmCalculations.HandState.PLACE_DISK) &&
 							   (ArmSubsystem.getInstance().getWristTargetY() > RobotMap.PICK_UP_MID_STEP_Y);
-					}
-					
-				});
-			addSequential(
-				new ConditionalCommand(
-					new MoveArmWristToCommand(RobotMap.PLACE_START_X, RobotMap.PLACE_START_Y), 
-					new WaitCommand(.01)) {
-
-					@Override
-					protected boolean condition() {
-						return ArmSubsystem.getInstance().getHandState() != RobotArmCalculations.HandState.PLACE_DISK;
 					}
 					
 				});

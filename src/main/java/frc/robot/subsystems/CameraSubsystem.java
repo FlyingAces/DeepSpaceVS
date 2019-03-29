@@ -16,6 +16,10 @@ public class CameraSubsystem extends Subsystem {
 		UsbCamera cameraFront = CameraServer.getInstance().startAutomaticCapture("frontEye", RobotMap.CAMERA_FRONT);
 		cameraFront.setResolution(RobotMap.CAMERA_IMG_WIDTH, RobotMap.CAMERA_IMG_HEIGHT);
 		cameraFront.setBrightness(25);
+
+		UsbCamera cameraBack = CameraServer.getInstance().startAutomaticCapture("backEye", RobotMap.CAMERA_BACK);
+		cameraFront.setResolution(RobotMap.CAMERA_IMG_WIDTH, RobotMap.CAMERA_IMG_HEIGHT);
+		cameraFront.setBrightness(25);
 	}
 	
 	@Override

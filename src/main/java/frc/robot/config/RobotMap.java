@@ -13,14 +13,16 @@ public class RobotMap {
 
 	public static final double SHOULDER_MAX_COMBAT_GRAVITY = .19;
 	public static final double SHOULDER_MIN_COMBAT_GRAVITY = .07;
-	// todo: test p = (1023 / (((1024 x 4 x 6) / 360) * 3.3) = 4.56 Ma power up to 3.3 dregees
-	public static Gains SHOULDER_GAINS = new Gains(0.25, 0.0, 0.0, 0.0, 0, 1.0); 
+	// p = (1023 / (((1024 x 4 x 6) / 360) * 3.3) = 4.56
+	public static Gains SHOULDER_GAINS = new Gains(4.3, 0.0, 0.0, 0.0, 0, 1.0); // .25
 
 	public static final double ELBOW_MIN_COMBAT_GRAVITY = .26;
-	public static Gains ELBOW_GAINS = new Gains(0.8, 0.0, 0.0, 0.0, 0, 1.0);
+	// p = (1023 / (((1024 x 4 x 6) / 360) * ))
+	public static Gains ELBOW_GAINS = new Gains(1.6, 0.0, 0.0, 0.0, 0, 1.0);
 	
 	public static final double WRIST_MIN_COMBAT_GRAVITY = .25;
-	public static Gains WRIST_GAINS = new Gains(0.5, 0.0, 0.0, 0.0, 0, 1.0);
+	// p = (1023 /  (((250 * 4) / 360) * 96) = 3.83
+	public static Gains WRIST_GAINS = new Gains(3.83, 0.0, 0.0, 0.0, 0, 1.0); //.5
 
 	public static enum Talon {
 		SHOULDER_MOTOR(8), //8
@@ -54,7 +56,7 @@ public class RobotMap {
 		BASE_CONNECTION(8.0),
 		SHOULDER_SEGMENT_LENGTH(25.6),
 		ELBOW_SEGMENT_LENGTH(34.75),
-		HAND_HEIGHT(16.0),
+		HAND_HEIGHT(17.0),
 		HAND_WIDTH(14.0),
 		MAX_EXTENSION(30.0),
 		MAX_STEP_HEIGHT(19.0);
@@ -77,8 +79,8 @@ public class RobotMap {
 		ELBOW_START_ANGLE(-152.0),
 		ELBOW_MAX_ANGLE(175.0),
 		ELBOW_MIN_ANGLE(-152.0),
-		WRIST_START_ANGLE(147.0), // 147.0
-		WRIST_MAX_ANGLE(147.0),
+		WRIST_START_ANGLE(116.0),
+		WRIST_MAX_ANGLE(116.0),
 		WRIST_MIN_ANGLE(-170.0);
 		
 		private double _angle;
@@ -184,11 +186,13 @@ public class RobotMap {
 																(Math.abs(RobotMap.PLACE_START_X - Measurement.ELBOW_SEGMENT_LENGTH.getInches()) * 
 																 Math.abs(RobotMap.PLACE_START_X - Measurement.ELBOW_SEGMENT_LENGTH.getInches())));
 	
-	public static final double DISK_LOW_POSITION_Y = RobotMap.PLACE_START_Y;
+	public static final double DISK_LOW_POSITION_Y = RobotMap.GROUND_LEVEL_Y +  19.0 - 
+													(RobotMap.Measurement.HAND_HEIGHT.getInches() - 5);
 	public static final double DISK_MIDDLE_POSITION_Y = RobotMap.DISK_LOW_POSITION_Y + 28;
 	public static final double DISK_HIGH_POSITION_Y = RobotMap.DISK_MIDDLE_POSITION_Y + 28;
 
-	public static final double BALL_LOW_POSITION_Y = RobotMap.PLACE_START_Y;
+	public static final double BALL_LOW_POSITION_Y = RobotMap.GROUND_LEVEL_Y +  27.5 - 
+													(RobotMap.Measurement.HAND_HEIGHT.getInches() - 5);
 	public static final double BALL_MIDDLE_POSITION_Y = RobotMap.BALL_LOW_POSITION_Y + 28;
 	public static final double BALL_HIGH_POSITION_Y = RobotMap.BALL_MIDDLE_POSITION_Y + 28;
 	
@@ -201,7 +205,8 @@ public class RobotMap {
 			 										   Measurement.MAX_EXTENSION.getInches() - 
 			 										   Measurement.HAND_WIDTH.getInches();
 	
-	public static final int CAMERA_FRONT = 0;
+	public static final int CAMERA_FRONT = 1;
+	public static final int CAMERA_BACK = 0;
 	//only can use 160x120, 320x240, 640x480
 	public static final int CAMERA_IMG_WIDTH = 320;
 	public static final int CAMERA_IMG_HEIGHT = 240;

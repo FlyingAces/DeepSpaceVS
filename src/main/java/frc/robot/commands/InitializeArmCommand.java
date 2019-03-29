@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.command.WaitCommand;
 
 public class InitializeArmCommand extends CommandGroup {
 	public static enum Position {
-		START, PICK_UP;
+		START, PLACE_BALL;
 	}
 
 	public InitializeArmCommand(Position position) {
@@ -28,16 +28,19 @@ public class InitializeArmCommand extends CommandGroup {
 						}
 						
 					});
-				
+
+				addSequential(new MoveArmAnglesCommand(0.0, 0.0, 0.0));
 				addSequential(new MoveArmAnglesCommand(RobotMap.Angle.SHOULDER_START_ANGLE.getAngle(), 
-													RobotMap.Angle.ELBOW_START_ANGLE.getAngle(), 
-													RobotMap.Angle.WRIST_START_ANGLE.getAngle()));
+													   RobotMap.Angle.ELBOW_START_ANGLE.getAngle(), 
+													   RobotMap.Angle.WRIST_START_ANGLE.getAngle()));
 			break;
-			case PICK_UP:
+			case PLACE_BALL:
+				addSequential(new MoveArmAnglesCommand(MoveArmAnglesCommand.USE_CURRENT_ANGLE, -RobotMap.Angle.SHOULDER_START_ANGLE.getAngle(), -45.0));
 				addSequential(new MoveArmWristToCommand(RobotMap.ROBOT_BACK_X, RobotMap.ROBOT_BACK_MID_STEP_Y));
 				addSequential(new MoveArmAnglesCommand(0.0, 45.0, MoveArmAnglesCommand.USE_CURRENT_ANGLE));
 				addSequential(new MoveArmWristToCommand(RobotMap.ROBOT_FRONT_X, RobotMap.ROBOT_FRONT_MID_STEP_Y));
-				addSequential(new ChangeHandStateCommand(RobotArmCalculations.HandState.PICK_UP));
+				addSequential(new MoveArmWristToCommand(RobotMap.PLACE_START_X, RobotMap.BALL_MIDDLE_POSITION_Y, RobotArmCalculations.HandState.PLACE_BALL));
+
 			break;
 		}
 	}
